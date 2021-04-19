@@ -1,0 +1,38 @@
+﻿@page "/products/edit/{ProductId:int}"
+@inject IProductsRepository productsRepository
+@inject NavigationManager navigationManager
+@attribute [Authorize]
+
+<h3>Edit Product</h3>
+@if (Product != null)
+{
+    @*<ProductForm Product="Product"
+        OnValidSubmit="Edit"
+        NotSelectedCategories="NotSelectedCategories"
+        SelectedCategories="SelectedCategories"
+        />*@
+    <ProductForm Product="Product"
+                 OnValidSubmit="Edit" />
+}
+@code {
+    [Parameter] public int ProductId { get; set; }
+    private Product Product;
+    private List<Subcategory> Subcategories;
+    //private List<Category> NotSelectedCategories;
+    //private List<Category> SelectedCategories;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Product = await productsRepository.GetDetailsProduct(ProductId);
+        //var model = await productsRepository.GetProductForUpdate(ProductId);
+        //Product = model.Product;
+        //SelectedCategories = model.SelectedCategories;
+        //NotSelectedCategories = model.NotSelectedCategories;
+    }
+
+    private async Task Edit()
+    {
+        await productsRepository.UpdateProduct(Product);
+        navigationManager.NavigateTo($"product/{ProductId}/{Product.Title.Replace(" ", "-")}");
+    }
+}

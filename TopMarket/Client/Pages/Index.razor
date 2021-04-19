@@ -1,0 +1,37 @@
+﻿@page "/"
+@page "/index"
+@inject IProductsRepository productsRepository
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        You are Authorized, @context.User.Identity.Name
+    </Authorized>
+    <NotAuthorized>
+        Not Authorized 
+    </NotAuthorized>
+</AuthorizeView>
+
+<div>
+    <h3>Products</h3>
+    @if (ProductDiscountDto != null)
+    {<ProductsList ProductDiscountDto="ProductDiscountDto" />}
+    else { <h3>Nothing</h3>}
+    
+</div>
+
+@code{ 
+    //List<Product> Products;
+    List<ProductDiscountDto> ProductDiscountDto;
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            ProductDiscountDto = await productsRepository.GetProducts();
+            //Products= ProductDiscountDto.pr
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    }

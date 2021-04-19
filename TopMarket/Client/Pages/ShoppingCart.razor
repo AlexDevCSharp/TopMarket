@@ -1,0 +1,96 @@
+﻿@page "/shopingcart"
+@inject NavigationManager navigationManager
+@inject ICartRepository cartRepository
+@inject IOrderRepository orderRepository
+
+<h3>ShoppingCart</h3>
+@if (CartTotal != null)
+{
+    if (CartTotal.Total != 0)
+    {
+        <GenericList List="CartTotal.Products">
+            <WholeListTemplate>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in CartTotal.Products)
+                        {
+                        <tr>
+                            <td>@item.Product.Title</td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(() => Remove(item.Product,1))">-</button>
+                                @item.Quantity
+                                <button class="btn btn-danger" @onclick="@(() => AddMore(item.Product))">+</button>
+                            </td>
+                            <td>@item.Product.Price</td>
+                            <td>@item.ProductTotal</td>
+                            <td><button class="btn btn-danger" @onclick="@(() => Remove(item.Product,0))">Remove</button></td>
+                        </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Sum of order</td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                @CartTotal.Total
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </WholeListTemplate>
+        </GenericList>
+        @*<h3>@CartTotal.Total</h3>*@
+        @*<button class="btn btn-danger" @onclick="@(() => MakeOrder(item.Product,1))">Make an order</button>*@
+        <a class="btn btn-info" href="/order/create">Make an order</a>
+
+    }
+    else
+    {
+        <div>No products in the cart</div>
+    }
+}
+
+
+
+@code {
+    CartTotal CartTotal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CartTotal = await cartRepository.GetCart();
+    }
+
+    private async Task AddMore(Product Product)
+    {
+        await cartRepository.Add(Product.Id);
+        //await Task.Delay(2000);
+
+        //navigationManager.NavigateTo("shopingcart");
+        CartTotal = await cartRepository.GetCart();
+
+    }
+
+    private async Task Remove(Product Product, int typeId)
+    {
+        await cartRepository.Remove(Product.Id, typeId);
+        //await Task.Delay(2000);
+
+        //navigationManager.NavigateTo("shopingcart");
+        CartTotal = await cartRepository.GetCart();
+    }
+
+    //private async Task MakeOrder(Product Product, int typeId)
+    //{
+    //    CartTotal = await cartRepository.GetCart();
+    //    //await orderRepository.CreateOrder(Product.Id, typeId);
+    //}
+}

@@ -1,0 +1,23 @@
+﻿@*@page "/meat/{CategoryId:int}"*@
+@page "/meat"
+@inject IProductsRepository productsRepository
+
+<div>
+    <h3>Products</h3>
+    <ProductsList Products="Products" />
+</div>
+
+@code{ 
+    //[Parameter] public int CategoryId { get; set; }
+    List<Product> Products;
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Products = await productsRepository.GetProductsByCategory(2);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    } }

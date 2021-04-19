@@ -1,0 +1,66 @@
+﻿@page "/product/{ProductId:int}"
+@page "/product/{ProductId:int}/{ProductName}"
+@inject IProductsRepository productsRepository
+
+@if (product == null)
+{
+    <text>Loading...</text> }
+else
+{
+    <h2>@product.Title @*(@model.Product.ReleaseDate.Value.ToString("yyyy"))*@</h2>
+
+    @*for (int i = 0; i < model.Categories.Count; i++)
+        {
+            if (i < model.Categories.Count - 1)
+            {
+                @linkCategory(model.Categories[i])<text>, </text> }
+            else
+            {
+                @linkCategory(model.Categories[i]) }
+        }*@
+
+    @*<text> | </text> <span>@model.Product.ReleaseDate.Value.ToString("dd MMM yyyy")</span>*@
+
+    <div style="display: flex">
+        <span style="display: inline-block; margin-right: 5px;"><img src="@product.Poster" style="width: 225px; height: 315px" /></span>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <h3>Summary</h3>
+        <div>
+            <RenderMarkdown MarkdownContent="@product.Summary" />
+        </div>
+    </div>
+
+    @*<div style="margin-top: 10px;">
+            <h3>Actors</h3>
+            <div style="display: flex; flex-direction: column">
+                @foreach (var actor in model.Actors)
+                {
+                    <div style="margin-bottom: 2px;">
+                        <img style="width: 50px;" src="@actor.Picture" />
+                        <span style="display:inline-block;width: 200px;"><a href="/person/@actor.Id/@actor.Name.Replace(" ", "-")">@actor.Name</a></span>
+                        <span style="display:inline-block; width: 45px;">...</span>
+                        <span>@actor.Character</span>
+                    </div>}
+            </div>
+        </div>*@
+}
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+    [Parameter] public string ProductName { get; set; }
+    private RenderFragment<Category> linkCategory = (category) =>@<a href="products/search?categoryId=@category.Id">@category.Name</a>;
+DetailsProductDTO model;
+Product product;
+
+
+protected async override Task OnInitializedAsync()
+{
+product = await productsRepository.GetDetailsProduct(ProductId);
+//model = await productsRepository.GetDetailsProductDTO(ProductId);
+}
+
+}
+
+

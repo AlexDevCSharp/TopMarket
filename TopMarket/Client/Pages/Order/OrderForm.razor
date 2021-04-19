@@ -1,0 +1,49 @@
+﻿@inject IOrderRepository orderRepository
+
+<EditForm Model="Order" OnValidSubmit="OnDataAnnotationsValidated">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Order.CustomerName" />
+            <ValidationMessage For="@(() => Order.CustomerName)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Phone:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Order.CustomerPhone" />
+            <ValidationMessage For="@(() => Order.CustomerPhone)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Order.CustomerEmail" />
+            <ValidationMessage For="@(() => Order.CustomerEmail)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Address:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Order.CustomerAddress" />
+            <ValidationMessage For="@(() => Order.CustomerAddress)" />
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+</EditForm>
+
+@code { 
+    [Parameter] public Order Order { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task OnDataAnnotationsValidated()
+    {
+        await OnValidSubmit.InvokeAsync(null);
+    }
+}

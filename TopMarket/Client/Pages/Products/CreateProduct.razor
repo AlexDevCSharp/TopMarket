@@ -1,0 +1,36 @@
+﻿@page "/products/create"
+@inject NavigationManager navigationManager
+@inject IProductsRepository productsRepository
+@inject ICategoryRepository categoryRepository
+@attribute [Authorize]
+
+<h3>Create Product</h3>
+
+@if (Categories != null)
+{
+    <ProductForm Product="Product" OnValidSubmit="SaveProduct" />
+}
+
+@code { 
+    private Product Product = new Product();
+
+    private List<Category> Categories;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Categories = await categoryRepository.GetCategories();
+    }
+
+    private async Task SaveProduct()
+    {
+        try
+        {
+            var productId = await productsRepository.CreateProduct(Product);
+            navigationManager.NavigateTo($"product/{productId}/{Product.Title.Replace(" ", "-")}");
+        }
+        catch (Exception ex)
+        {
+
+        }
+    } 
+}

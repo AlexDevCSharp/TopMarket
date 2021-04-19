@@ -1,0 +1,167 @@
+﻿@inject ICategoryRepository categoryRepository
+@inject ISubcategoriesRepository subcategoriesRepository
+
+<EditForm Model="Product" OnValidSubmit="OnDataAnnotationsValidated">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Title:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Product.Title" />
+            <ValidationMessage For="@(() => Product.Title)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <InputImg Label="Picture" OnSelectedImage="PosterSelected" ImageURL="@imageURL" />
+    </div>
+    <div class="form-group">
+        <label>Brand:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Product.Brand" />
+            <ValidationMessage For="@(() => Product.Brand)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Price:</label>
+        <div>
+            <input type="number" step="any"
+                   @bind-value="Product.Price"
+                   @bind-value:event="oninput"/>
+            <ValidationMessage For="@(() => Product.Price)" />
+        </div>
+    </div>
+    <div class="form-group form-markdown">
+        <InputMarkdown @bind-Value="Product.Summary"
+                       Label="Summary"
+                       For="@(() => Product.Summary)" />
+    </div>
+
+    <div class="form-group">
+        <label>Category:</label>
+        <div>
+            <InputSelectNumber class="form-control"
+                               ValueChanged="@((int value) => CategoryHasChanged(value))"
+                               ValueExpression="@(() => categoryId)"
+                               Value="@categoryId">
+                <option value="0">--Select a Category--</option>
+                @foreach (var item in Categories)
+                {
+@if (item.Id == categoryId)
+{
+<option selected value="@item.Id">@item.Name</option> }
+else
+{
+<option value="@item.Id">@item.Name</option>}}
+            </InputSelectNumber>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Subcategory:</label>
+        <div>
+            <InputSelectNumber class="form-control"
+                               @bind-Value="Product.SubcatId">
+                <option value="0">--Select a subcategory--</option>
+                @foreach (var item in Subcategories)
+                {
+@if (item.Id == Product.SubcatId)
+{
+<option selected value="@item.Id">@item.Name</option> }
+else
+{
+<option value="@item.Id">@item.Name</option>}}
+            </InputSelectNumber>
+            <ValidationMessage For="@(() => Product.SubcatId)" />
+        </div>
+    </div>
+
+    @*<div class="form-group">
+            <label>Categories:</label>
+            <div>
+                <MultipleSelector Selected="Selected" NoSelected="NotSelected"></MultipleSelector>
+            </div>
+        </div>*@
+
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+</EditForm>
+
+@code { [Parameter] public Product Product { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    //[Parameter] public List<Category> SelectedCategories { get; set; } = new List<Category>();
+    //[Parameter] public List<Category> NotSelectedCategories { get; set; } = new List<Category>();
+    //[Parameter] public List<Person> SelectedActors { get; set; } = new List<Person>();
+
+
+    //private List<MultipleSelectorModel> Selected = new List<MultipleSelectorModel>();
+    //private List<MultipleSelectorModel> NotSelected = new List<MultipleSelectorModel>();
+
+    private List<Category> Categories = new List<Category>();
+    private List<Subcategory> Subcategories = new List<Subcategory>();
+    private int categoryId = 0;
+
+    private string imageURL;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await categoryRepository.GetCategories();
+
+        if (Product.SubcatId != 0)
+        {
+            var subcategories = await subcategoriesRepository.GetSubcategories();
+            categoryId = subcategories.FirstOrDefault(x => x.Id == Product.SubcatId).CategoryId;
+            Subcategories = subcategories.Where(x => x.CategoryId == categoryId).ToList();
+            //await LoadSubcategories(categoryId);
+        }
+
+        //Selected = SelectedCategories.Select(x => new MultipleSelectorModel(x.Id.ToString(), x.Name)).ToList();
+        //NotSelected = NotSelectedCategories.Select(x => new MultipleSelectorModel(x.Id.ToString(), x.Name)).ToList();
+
+        if (!string.IsNullOrEmpty(Product.Poster))
+        {
+            imageURL = Product.Poster;
+            Product.Poster = null;
+        }
+    }
+
+    private void PosterSelected(string imageBase64)
+    {
+        Product.Poster = imageBase64;
+        imageURL = null;
+        Console.WriteLine(imageBase64);
+    }
+
+
+
+    private async Task OnDataAnnotationsValidated()
+    {
+        //Product.ProductsCategories = Selected
+        //    .Select(x => new ProductsCategories { CategoryId = int.Parse(x.Key) }).ToList();
+
+
+        if (!string.IsNullOrWhiteSpace(Product.Poster)) { imageURL = null; }
+
+        await OnValidSubmit.InvokeAsync(null);
+    }
+
+    private async Task CategoryHasChanged(int value)
+    {
+        Product.SubcatId = 0;
+        categoryId = value;
+
+        if (value == 0)
+        {
+            Subcategories.Clear();
+        }
+        else
+        {
+            await LoadSubcategories(value);
+        }
+    }
+
+    private async Task LoadSubcategories(int categoryId)
+    {
+        var subcategories = await subcategoriesRepository.GetSubcategories();
+        Subcategories = subcategories.Where(x => x.CategoryId == categoryId).ToList();
+        //States = await stateRepository.GetStatesForCountries(countryId);
+
+        //States = await http.GetJsonAsync<List<State>>($"api/countries/{countryId}/states");
+    } }

@@ -1,0 +1,50 @@
+﻿@inject IJSRuntime js
+@inject IProductsRepository productsRepository
+@inject ICartRepository cartRepository
+
+<div class="products-container">
+    <GenericList List="ProductDiscountDto">
+        <ElementTemplate Context="productDiscountDto">
+            <IndividualProduct ProductDiscountDto="productDiscountDto"
+                               DeleteProduct="DeleteProduct" AddToCart="AddToCart" 
+                               @key="productDiscountDto.Product.Id"/>
+        </ElementTemplate>
+    </GenericList>
+</div>
+
+
+@code { 
+    [Parameter] public List<ProductDiscountDto> ProductDiscountDto { get; set; }
+    CartTotal CartTotal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CartTotal = await cartRepository.GetCart();
+    }
+
+    private async Task DeleteProduct(Product product)
+    {
+        await js.MyFunction("custom message");
+        var confirmed = await js.Confirm($"Are you sure you want to delete {product.Title}?");
+
+        if (confirmed)
+        {
+            await productsRepository.DeleteProduct(product.Id);
+            //Products.Remove(product);
+
+        }
+    }
+
+    private async Task AddToCart(Product product)
+    {
+        await cartRepository.Add(product.Id);
+        CartTotal = await cartRepository.GetCart();
+    }
+
+    private async Task AddMore(Product Product)
+    {
+        await cartRepository.Add(Product.Id);
+        CartTotal = await cartRepository.GetCart();
+
+    }
+}

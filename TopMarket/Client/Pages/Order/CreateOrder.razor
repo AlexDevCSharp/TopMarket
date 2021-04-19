@@ -1,0 +1,36 @@
+﻿@page "/order/create"
+@inject IOrderRepository orderRepository
+@inject ICartRepository cartRepository
+@inject NavigationManager navigationManager
+@*@attribute [Authorize]*@
+
+<h3>Create Order</h3>
+
+<OrderForm Order="order" OnValidSubmit="Create" />
+
+@code {
+    private Order order = new Order();
+    private OrderCartDTO orderCart = new OrderCartDTO();
+
+    private async Task Create()
+    {
+        try
+        {
+            var orderId = await orderRepository.CreateOrder(order);
+            var cartTotal = await cartRepository.GetCart();
+            foreach (var product in cartTotal.Products)
+            {
+                orderCart.OrderId = orderId;
+                orderCart.Products = product;
+                await orderRepository.CreateOrderDetails(orderCart);
+            }
+            await cartRepository.Clear();
+            navigationManager.NavigateTo("shopingcart");
+        }
+        catch (Exception ex)
+        {
+            // ...
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

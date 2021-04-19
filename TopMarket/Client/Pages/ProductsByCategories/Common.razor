@@ -1,0 +1,39 @@
+﻿@page "/cat/{Category}"
+@*@page  "/fruits"*@
+@inject IProductsRepository productsRepository
+
+<div>
+    <h3>Products</h3>
+    <ProductsList Products="Products" />
+</div>
+
+@code{ 
+    [Parameter] public string Category { get; set; }
+    List<Product> Products;
+    protected async override Task OnInitializedAsync()
+    {
+        int categoryid = 0;
+        if (Category == "fruits")
+        {
+            categoryid = 1;
+        }
+        else if(Category == "bakaley")
+        {
+            categoryid = 2;
+
+        }
+        else if (Category == "meat")
+        {
+            categoryid = 3;
+
+        }
+        try
+        {
+            Products = await productsRepository.GetProductsByCategory(categoryid);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}
