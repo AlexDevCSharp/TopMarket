@@ -7,14 +7,14 @@
             <img src="@ProductDiscountDto.Product.Poster" alt="Avatar" style="width:200px; height:200px;">
             <AuthorizeView Roles="Admin">
                 <Authorized>
-                    <h5></h5>
+                    @*<h5></h5>
                     <div>
                         <a class="w3-button w3-green" href="/products/edit/@ProductDiscountDto.Product.Id">edit</a>
                         <button class="w3-button w3-red"
                                 @onclick="@(() => DeleteProduct.InvokeAsync(ProductDiscountDto.Product))">
                             delete
                         </button>
-                    </div>
+                    </div>*@
 
                 </Authorized>
             </AuthorizeView>
