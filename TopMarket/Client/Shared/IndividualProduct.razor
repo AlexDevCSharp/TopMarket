@@ -1,46 +1,79 @@
 ﻿@inject ICartRepository cartRepository
 
-<div class="col-lg-3">
+<div class="col-sm-3">
+
+    <div class="card text-black-50 @*bg-primary*@">
+        <img class="card-img-top" src="@ProductDiscountDto.Product.Poster" alt="Poster">
+        <div class="card-body bg-light text-center" style="height:150px;">
+            <h5 class="card-title text-center"><a href="@productURL">@ProductDiscountDto.Product.TitleBrief</a></h5>
+            <button class="btn btn-danger" @onclick="@(() => Remove(ProductDiscountDto.Product))">-</button>
+            @quantity
+            <button class="btn btn-danger" @onclick="@(() => AddMore(ProductDiscountDto.Product))">+</button>
+            <h6>Amount:@totalAmount gramm</h6>
+        </div>
+        <h8 class="card-footer">
+            $@ProductDiscountDto.LastPrice for @ProductDiscountDto.Product.Weight gramm
+        </h8>
+    </div>
+</div>
+@*<div class="card col-md-6 col-xl-3">
+        <img src="@ProductDiscountDto.Product.Poster" alt="Poster">
+        <div class="card-block">
+            <div class="card-block">
+                <h4 class="card-title"><a href="@productURL">@ProductDiscountDto.Product.TitleBrief</a></h4>
+                <h6 class="card-subtitle"><a href="@productURL">@ProductDiscountDto.Product.TitleBrief</a></h6>
+            </div>
+
+            <button class="btn btn-danger" @onclick="@(() => Remove(ProductDiscountDto.Product))">-</button>
+            @quantity
+            <button class="btn btn-danger" @onclick="@(() => AddMore(ProductDiscountDto.Product))">+</button>
+        </div>
+
+    </div>*@
+
+<!--<div class="col-sm-3">
     <div class="w3-card-4 w3-dark-grey">
         <div class="w3-container w3-center" style="height:100%">
             <h4><a href="@productURL">@ProductDiscountDto.Product.TitleBrief</a></h4>
-            <img src="@ProductDiscountDto.Product.Poster" alt="Avatar" style="width:200px; height:200px;">
-            <AuthorizeView Roles="Admin">
-                <Authorized>
-                    @*<h5></h5>
-                    <div>
-                        <a class="w3-button w3-green" href="/products/edit/@ProductDiscountDto.Product.Id">edit</a>
-                        <button class="w3-button w3-red"
-                                @onclick="@(() => DeleteProduct.InvokeAsync(ProductDiscountDto.Product))">
-                            delete
-                        </button>
-                    </div>*@
-
-                </Authorized>
-            </AuthorizeView>
-            <h5></h5>
-
-            <div>
-                <button class="btn btn-danger" @onclick="@(() => Remove(ProductDiscountDto.Product))">-</button>
-                @quantity
-                <button class="btn btn-danger" @onclick="@(() => AddMore(ProductDiscountDto.Product))">+</button>
-            </div>
-            <h5>Amount:@totalAmount gramm</h5>
-            @*<button class="w3-button w3-green"
-                        @onclick="@(() => AddToCart.InvokeAsync(Product))">
-                    Add
-                </button>*@
+            <img src="@ProductDiscountDto.Product.Poster" alt="Avatar" style="width:100%;display:flex">-->
+@*<AuthorizeView Roles="Admin">
+                    <Authorized>
+    <h5></h5>
+        <div>
+            <a class="w3-button w3-green" href="/products/edit/@ProductDiscountDto.Product.Id">edit</a>
+            <button class="w3-button w3-red"
+                    @onclick="@(() => DeleteProduct.InvokeAsync(ProductDiscountDto.Product))">
+                delete
+            </button>
         </div>
-        <h5></h5>
-        <div class="w3-container">
-            <div><a href="@productURL">$@ProductDiscountDto.LastPrice for @ProductDiscountDto.Product.Weight gramm</a></div>
-            @*<h5></h5>
-                <div><a href="@productURL">@Product.TitleBrief</a></div>*@
-        </div>
+
+    </Authorized>
+    </AuthorizeView>*@
+<!--<h5></h5>
+
+<div>
+    <button class="btn btn-danger" @onclick="@(() => Remove(ProductDiscountDto.Product))">-</button>
+    @quantity
+    <button class="btn btn-danger" @onclick="@(() => AddMore(ProductDiscountDto.Product))">+</button>
+</div>
+<h5>Amount:@totalAmount gramm</h5>
+</div>
+<h5></h5>
+<div class="w3-container">
+    <div><a href="@productURL">$@ProductDiscountDto.LastPrice for @ProductDiscountDto.Product.Weight gramm</a></div>
+<h5></h5>
+</div>
     </div>
     <h5></h5>
-</div>
+</div>-->
 <style>
+    .card img {
+        /* change the height to whatever you want */
+        height: 200px;
+        object-fit: cover;
+        display: block;
+        width: 100%;
+    }
 </style>
 
 @code {
