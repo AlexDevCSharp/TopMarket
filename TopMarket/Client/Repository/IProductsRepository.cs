@@ -13,11 +13,9 @@ namespace TopMarket.Client.Repository
         Task DeleteProduct(int Id);
         Task<DetailsProductDTO> GetDetailsProductDTO(int id);
         Task<Product> GetDetailsProduct(int id);
-        Task<List<ProductDiscountDto>> GetProducts();
+        Task<List<ProductDiscountDto>> GetProducts(int categoryId);
         Task<ProductUpdateDTO> GetProductForUpdate(int id);
         Task<PaginatedResponse<List<Product>>> GetProductsFiltered(FilterProductsDTO filterProductsDTO);
         Task UpdateProduct(Product product);
-        Task<List<Product>> GetProductsByCategory(int categoryId);
-
     }
 }

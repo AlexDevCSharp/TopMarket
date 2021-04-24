@@ -26,7 +26,7 @@
     {
         try
         {
-            ProductDiscountDto = await productsRepository.GetProducts();
+            ProductDiscountDto = await productsRepository.GetProducts(0);
             //Products= ProductDiscountDto.pr
         }
         catch (Exception ex)

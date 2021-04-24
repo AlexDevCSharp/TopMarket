@@ -2,19 +2,20 @@
 @inject IProductsRepository productsRepository
 @inject ICartRepository cartRepository
 
-<div class="container">
-    <div class="row">
-        <div class="card-group">
-            <GenericList List="ProductDiscountDto">
-                <ElementTemplate Context="productDiscountDto">
-                    <IndividualProduct ProductDiscountDto="productDiscountDto"
-                                       DeleteProduct="DeleteProduct" AddToCart="AddToCart"
-                                       @key="productDiscountDto.Product.Id" />
-                </ElementTemplate>
-            </GenericList>
-        </div>
+@*<div class="container">*@
+    @*<div class="row">
+        
+    </div>*@
+    <div class="card-group">
+        <GenericList List="ProductDiscountDto">
+            <ElementTemplate Context="productDiscountDto">
+                <IndividualProduct ProductDiscountDto="productDiscountDto"
+                                   DeleteProduct="DeleteProduct" AddToCart="AddToCart"
+                                   @key="productDiscountDto.Product.Id" />
+            </ElementTemplate>
+        </GenericList>
     </div>
-</div>
+@*</div>*@
 
 
 

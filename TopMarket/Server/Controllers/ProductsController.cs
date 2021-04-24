@@ -33,13 +33,23 @@ namespace TopMarket.Server.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("category/{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<ProductDiscountDto>>> Get()
+        public async Task<ActionResult<List<ProductDiscountDto>>> GetProducts(int id)
         {
             var products = new List<Product>();
-
-            products = await context.Products.ToListAsync();
+            if (id == 0)
+            {
+                products = await context.Products.ToListAsync();
+            }
+            else
+            {
+                products = await (from p in context.Products
+                                  join s in context.Subcategories on p.SubcatId equals s.Id
+                                  join c in context.Categories on s.CategoryId equals c.Id
+                                  where s.CategoryId == id
+                                  select p).ToListAsync();
+            }
             var discounts = await context.Discounts.ToListAsync();
             List<ProductDiscountDto> productsDTO = new List<ProductDiscountDto>();
             foreach (var product in products)
@@ -72,19 +82,6 @@ namespace TopMarket.Server.Controllers
             //model.Categories = product.ProductsCategories.Select(x => x.Category).ToList();
 
             return product;
-        }
-
-        [HttpGet("category/{id}")]
-        [AllowAnonymous]
-        public async Task<ActionResult<List<Product>>> GetCategory(int id)
-        {
-            var prod = from p in context.Products
-                       join s in context.Subcategories on p.SubcatId equals s.Id
-                       join c in context.Categories on s.CategoryId equals c.Id
-                       where s.CategoryId == id
-                       select p;
-
-            return await prod.ToListAsync();
         }
 
         [HttpGet("{id}")]

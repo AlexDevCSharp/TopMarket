@@ -18,9 +18,9 @@ namespace TopMarket.Client.Repository
             this.httpService = httpService;
         }
 
-        public async Task<List<ProductDiscountDto>> GetProducts()
+        public async Task<List<ProductDiscountDto>> GetProducts(int id)
         {
-            var response = await httpService.Get<List<ProductDiscountDto>>(url);
+            var response = await httpService.Get<List<ProductDiscountDto>>($"{url}/category/{id}");
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());
@@ -30,16 +30,6 @@ namespace TopMarket.Client.Repository
         public async Task<Product> GetDetailsProduct(int id)
         {
             var response = await httpService.Get<Product>($"{url}/details/{id}");
-            if (!response.Success)
-            {
-                throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
-        }
-
-        public async Task<List<Product>> GetProductsByCategory(int id)
-        {
-            var response = await httpService.Get<List<Product>>($"{url}/category/{id}");
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());

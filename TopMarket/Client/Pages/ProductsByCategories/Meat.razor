@@ -4,17 +4,17 @@
 
 <div>
     <h3>Products</h3>
-    <ProductsList Products="Products" />
+    <ProductsList ProductDiscountDto="ProductDiscountDto" />
 </div>
 
 @code{ 
     //[Parameter] public int CategoryId { get; set; }
-    List<Product> Products;
+    List<ProductDiscountDto> ProductDiscountDto;
     protected async override Task OnInitializedAsync()
     {
         try
         {
-            Products = await productsRepository.GetProductsByCategory(2);
+            ProductDiscountDto = await productsRepository.GetProducts(2);
         }
         catch (Exception ex)
         {
