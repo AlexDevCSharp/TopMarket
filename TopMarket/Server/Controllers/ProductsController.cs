@@ -44,14 +44,28 @@ namespace TopMarket.Server.Controllers
             }
             else
             {
-                products = await (from p in context.Products
-                                  join s in context.Subcategories on p.SubcatId equals s.Id
-                                  join c in context.Categories on s.CategoryId equals c.Id
-                                  where s.CategoryId == id
-                                  select p).ToListAsync();
+                products = GetProductsCatSubCat(id, products);
+                
             }
-            var discounts = await context.Discounts.ToListAsync();
             List<ProductDiscountDto> productsDTO = new List<ProductDiscountDto>();
+            productsDTO = GetProductDiscountDto(productsDTO, products);
+
+            return productsDTO;
+        }
+
+        private List<Product> GetProductsCatSubCat(int id, List<Product> products)
+        {
+            products = (from p in context.Products
+                             join s in context.Subcategories on p.SubcatId equals s.Id
+                             join c in context.Categories on s.CategoryId equals c.Id
+                             where s.CategoryId == id
+                             select p).ToList();
+            return products;
+        }
+
+        private List<ProductDiscountDto> GetProductDiscountDto(List<ProductDiscountDto> productsDTO, List<Product> products)
+        {
+            var discounts = context.Discounts.ToList();
             foreach (var product in products)
             {
                 var discount = discounts.FirstOrDefault(x => x.ProductId == product.Id);
@@ -105,14 +119,18 @@ namespace TopMarket.Server.Controllers
 
         [HttpPost("filter")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Product>>> Filter(FilterProductsDTO filterProductsDTO)
+        public async Task<ActionResult<List<ProductDiscountDto>>> Filter(FilterProductsDTO filterProductsDTO)
         {
-            var productsQueryable = context.Products.AsQueryable();
+
+            var productsDB = await context.Products.ToListAsync();
+
+            //var productsQueryable = context.Products.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filterProductsDTO.Title))
             {
-                productsQueryable = productsQueryable
-                    .Where(x => x.Title.Contains(filterProductsDTO.Title));
+                //productsQueryable = productsQueryable
+                //    .Where(x => x.Title.Contains(filterProductsDTO.Title));
+                productsDB = productsDB.Where(x => x.Title.Contains(filterProductsDTO.Title)).ToList();
             }
 
             //if (filterProductsDTO.InTheaters)
@@ -133,10 +151,13 @@ namespace TopMarket.Server.Controllers
                 //    .Contains(filterProductsDTO.CategoryId));
             }
 
-            await HttpContext.InsertPaginationParametersInResponse(productsQueryable,
+            List<ProductDiscountDto> productsDTO = new List<ProductDiscountDto>();
+            productsDTO = GetProductDiscountDto(productsDTO, productsDB);
+
+            await HttpContext.InsertPaginationParametersInResponseList(productsDTO,
                 filterProductsDTO.RecordsPerPage);
 
-            var products = await productsQueryable.Paginate(filterProductsDTO.Pagination).ToListAsync();
+            var products = productsDTO.PaginateList(filterProductsDTO.Pagination).ToList();
 
             return products;
         }

@@ -18,5 +18,15 @@ namespace TopMarket.Server.Helpers
             double totalAmountPages = Math.Ceiling(count / recordsPerPage);
             httpContext.Response.Headers.Add("totalAmountPages", totalAmountPages.ToString());
         }
+
+        public async static Task InsertPaginationParametersInResponseList<T>(this HttpContext httpContext,
+            IList<T> queryable, int recordsPerPage)
+        {
+            if (httpContext == null) { throw new ArgumentNullException(nameof(httpContext)); }
+
+            double count = queryable.Count();
+            double totalAmountPages = Math.Ceiling(count / recordsPerPage);
+            httpContext.Response.Headers.Add("totalAmountPages", totalAmountPages.ToString());
+        }
     }
 }

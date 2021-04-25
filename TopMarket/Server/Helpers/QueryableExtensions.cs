@@ -14,5 +14,12 @@ namespace TopMarket.Server.Helpers
                 .Skip((paginationDTO.Page - 1) * paginationDTO.RecordsPerPage)
                 .Take(paginationDTO.RecordsPerPage);
         }
+
+        public static List<T> PaginateList<T>(this List<T> queryable, PaginationDTO paginationDTO)
+        {
+            return queryable
+                .Skip((paginationDTO.Page - 1) * paginationDTO.RecordsPerPage)
+                .Take(paginationDTO.RecordsPerPage).ToList();
+        }
     }
 }

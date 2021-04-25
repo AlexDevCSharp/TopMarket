@@ -14,7 +14,7 @@
                    @bind-value="filterProductsDTO.Title" @bind-value:event="oninput"
                    @onkeypress="@((KeyboardEventArgs e) => TitleKeyPress(e))" />
         </div>
-        <div class="form-group mx-sm-3 mb-2">
+        @*<div class="form-group mx-sm-3 mb-2">
             <select class="form-control" @bind="filterProductsDTO.CategoryId">
                 <option value="0">
                     --Select a Genre--
@@ -24,28 +24,30 @@
                     <option value="@category.Id">@category.Name</option>
                 }
             </select>
-        </div>
+        </div>*@
 
         <button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="SearchForMovies">Filter</button>
         <button type="button" class="btn btn-danger mb-2" @onclick="Clear">Clear</button>
     </div>
 </EditForm>
 
-<ProductsList Products="Products"></ProductsList>
+<ProductsList ProductDiscountDto="ProductDiscountDto"></ProductsList>
 
-<Pagination CurrentPage="filterProductsDTO.Page" TotalAmountPages="totalAmountPages"
-            SelectedPage="SelectedPage" />
+    <Pagination CurrentPage="filterProductsDTO.Page" TotalAmountPages="totalAmountPages"
+                SelectedPage="SelectedPage" />
 
 @code {
-    private List<Product> Products;
+    //private List<Product> Products;
+    List<ProductDiscountDto> ProductDiscountDto;
+
     private FilterProductsDTO filterProductsDTO = new FilterProductsDTO();
     private int totalAmountPages;
-    private List<Category> Categories = new List<Category>();
+    //private List<Category> Categories = new List<Category>();
 
     protected async override Task OnInitializedAsync()
     {
         var queryStrings = navigationManager.GetQueryStrings(navigationManager.Uri);
-        Categories = await categoryRepository.GetCategories();
+        //Categories = await categoryRepository.GetCategories();
         if (queryStrings != null)
         {
             FillFilterWithQueryStrings(queryStrings);
@@ -97,7 +99,7 @@
         }
 
         var paginatedResponse = await productsRepository.GetProductsFiltered(filterProductsDTO);
-        Products = paginatedResponse.Response;
+        ProductDiscountDto = paginatedResponse.Response;
         totalAmountPages = paginatedResponse.TotalAmountPages;
     }
 

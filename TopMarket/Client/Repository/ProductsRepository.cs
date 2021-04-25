@@ -62,11 +62,11 @@ namespace TopMarket.Client.Repository
         //    return await httpService.GetHelper<DetailsProductDTO>($"{url}/{id}");
         //}
 
-        public async Task<PaginatedResponse<List<Product>>> GetProductsFiltered(FilterProductsDTO filterProductsDTO)
+        public async Task<PaginatedResponse<List<ProductDiscountDto>>> GetProductsFiltered(FilterProductsDTO filterProductsDTO)
         {
-            var responseHTTP = await httpService.Post<FilterProductsDTO, List<Product>>($"{url}/filter", filterProductsDTO);
+            var responseHTTP = await httpService.Post<FilterProductsDTO, List<ProductDiscountDto>>($"{url}/filter", filterProductsDTO);
             var totalAmountPages = int.Parse(responseHTTP.HttpResponseMessage.Headers.GetValues("totalAmountPages").FirstOrDefault());
-            var paginatedResponse = new PaginatedResponse<List<Product>>()
+            var paginatedResponse = new PaginatedResponse<List<ProductDiscountDto>>()
             {
                 Response = responseHTTP.Response,
                 TotalAmountPages = totalAmountPages
